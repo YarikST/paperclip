@@ -8,16 +8,18 @@ module Paperclip
 
     def initialize(target, options = {})
       super
-      cache_current_values
+      cache_current_values(options)
     end
 
     attr_writer :content_type
 
     private
 
-    def cache_current_values
+    def cache_current_values(options)
       self.original_filename = @target.original_filename if @target.respond_to?(:original_filename)
+      self.original_filename = options[:original_filename] if !self.original_filename && options[:original_filename]
       self.original_filename ||= "data"
+
       @tempfile = copy_to_tempfile(@target)
       @content_type = ContentTypeDetector.new(@tempfile.path).detect
       @size = @target.size
